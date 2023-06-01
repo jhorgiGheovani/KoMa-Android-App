@@ -1,18 +1,22 @@
 package com.jhorgi.koma
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -22,14 +26,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jhorgi.koma.ui.navigation.NavigationItem
 import com.jhorgi.koma.ui.navigation.Screen
 import com.jhorgi.koma.ui.screen.bookmark.BookmarkScreen
 import com.jhorgi.koma.ui.screen.camera.CameraScreen
 import com.jhorgi.koma.ui.screen.detail.DetailScreen
 import com.jhorgi.koma.ui.screen.home.HomeScreen
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@ExperimentalPermissionsApi
+@ExperimentalCoroutinesApi
 @Composable
 fun KomaApplication(
     modifier: Modifier = Modifier,
@@ -40,11 +48,13 @@ fun KomaApplication(
 
     Scaffold(
         bottomBar = {
-            BottomAppBar(
-                cutoutShape = CircleShape,
-                backgroundColor = Color.White
-            ) {
-                if (currentRoute != Screen.Detail.route) {
+            if (currentRoute != Screen.Detail.route) {
+//                BottomBar(navController)
+                BottomAppBar(
+                    backgroundColor = Color.White,
+                    cutoutShape = CircleShape,
+                    modifier = Modifier.background(colorResource(id = R.color.light_grey_super))
+                ) {
                     BottomBar(navController)
                 }
             }
@@ -57,6 +67,7 @@ fun KomaApplication(
                     shape = CircleShape,
                     backgroundColor = colorResource(id = R.color.primary_color),
                     contentColor = Color.White,
+                    modifier = modifier.size(60.dp).border(2.dp, Color.Green, CircleShape),
                     onClick = {
                         Screen.Camera.route.let {
                             navController.navigate(it) {
@@ -130,8 +141,8 @@ fun BottomBar(
     modifier: Modifier = Modifier
 ) {
     BottomNavigation(
-        backgroundColor = Color.LightGray,
-        contentColor = colorResource(id = R.color.grey_icons)
+        backgroundColor = MaterialTheme.colors.background,
+        contentColor = Color.Black,
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
@@ -140,13 +151,8 @@ fun BottomBar(
             NavigationItem(
                 title = stringResource(R.string.menu_home),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_home),
-                screen = Screen.Home
+                screen = Screen.Home,
             ),
-//            NavigationItem(
-//                title = stringResource(R.string.menu_camera),
-//                icon = ImageVector.vectorResource(id = R.drawable.baseline_camera_alt_24),
-//                screen = Screen.Camera
-//            ),
             NavigationItem(
                 title = stringResource(R.string.menu_bookmark),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_bookmark),
@@ -159,7 +165,7 @@ fun BottomBar(
                 icon = {
                     Icon(
                         imageVector = item.icon,
-                        contentDescription = item.title
+                        contentDescription = item.title,
                     )
                 },
                 label = {

@@ -10,4 +10,5 @@
     <color name="primary_color">#4C9A2A</color>
     <color name="grey_icons">#667080</color>
     <color name="user_name_color">#8F000000</color>
+    <color name="light_grey_super">#EEECEC</color>
 </resources>
