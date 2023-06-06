@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.jhorgi.koma.data.MainRepository
 import com.jhorgi.koma.ui.screen.detail.DetailViewModel
 import com.jhorgi.koma.ui.screen.home.HomeViewModel
+import com.jhorgi.koma.ui.screen.result.PostPhotoViewModel
 
 class ViewModelFactory(private val repository: MainRepository): ViewModelProvider.NewInstanceFactory() {
 
@@ -14,6 +15,8 @@ class ViewModelFactory(private val repository: MainRepository): ViewModelProvide
             return HomeViewModel(repository) as T
         }else if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
             return DetailViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(PostPhotoViewModel::class.java)) {
+            return PostPhotoViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

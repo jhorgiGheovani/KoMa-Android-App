@@ -4,36 +4,45 @@ import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import android.util.Log
+import androidx.camera.core.CameraControl
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.Preview
+import androidx.camera.core.UseCase
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jhorgi.koma.ui.utils.Permission
-import com.ujizin.camposer.CameraPreview
-import com.ujizin.camposer.state.CamSelector
-import com.ujizin.camposer.state.rememberCamSelector
-import com.ujizin.camposer.state.rememberCameraState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import java.io.File
 
 
 @ExperimentalPermissionsApi
 @ExperimentalCoroutinesApi
 @Composable
-fun CameraScreen() {
+fun CameraScreen(
+    modifier: Modifier = Modifier,
+    cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
+    onImageFile: (File) -> Unit = { }
+) {
     val context = LocalContext.current
     Permission(
         permission = Manifest.permission.CAMERA,
         rationale = "You said you wanted a picture, so I'm going to have to ask for permission.",
         permissionNotAvailableContent = {
-            Column() {
+            Column {
                 Text("O noes! No Camera!")
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
@@ -50,15 +59,49 @@ fun CameraScreen() {
             }
         }
     ) {
-        val cameraState = rememberCameraState()
-        var camSelector by rememberCamSelector(CamSelector.Back)
-        CameraPreview(
-            cameraState = cameraState,
-            camSelector = camSelector,
-        ) {
-            // Camera Preview UI
+        Box(modifier = modifier) {
+            val lifecycleOwner = LocalLifecycleOwner.current
+            val coroutineScope = rememberCoroutineScope()
+            var previewUseCase by remember { mutableStateOf<UseCase>(Preview.Builder().build()) }
+            val imageCaptureUseCase by remember {
+                mutableStateOf(
+                    ImageCapture.Builder()
+                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                        .build()
+                )
+            }
+            Box {
+                CameraPreview(
+                    modifier = Modifier.fillMaxSize(),
+                    onUseCase = {
+                        previewUseCase = it
+                    },
+                )
+                CapturePictureButton(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .padding(16.dp)
+                        .align(Alignment.BottomCenter),
+                    onClick = {
+                        coroutineScope.launch {
+                            onImageFile(imageCaptureUseCase.takePicture(context.executor))
+                        }
+                    }
+                )
+            }
+            LaunchedEffect(previewUseCase) {
+                val cameraProvider = context.getCameraProvider()
+                try {
+                    // Must unbind the use-cases before rebinding them.
+                    cameraProvider.unbindAll()
+                    cameraProvider.bindToLifecycle(
+                        lifecycleOwner, cameraSelector, previewUseCase, imageCaptureUseCase
+                    )
+                } catch (ex: Exception) {
+                    Log.e("CameraCapture", "Failed to bind camera use cases", ex)
+                }
+            }
         }
 
     }
-
 }

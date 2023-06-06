@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,7 +29,7 @@ import com.jhorgi.koma.ui.components.RecipeMenuItem
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(
-        factory = ViewModelFactory(Injection.provideRepository())
+        factory = ViewModelFactory(Injection.provideRepository(LocalContext.current))
     ),
     navigateToDetail: (String) -> Unit,
 ) {
@@ -73,7 +74,7 @@ fun HomeContent(
                     modifier = modifier
                         .fillMaxWidth()
                         .clickable {
-                        navigateToDetail(data.item.id)
+                        navigateToDetail(data.item.id.toString())
                     }
                 )
             }
