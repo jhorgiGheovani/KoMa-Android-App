@@ -1,26 +1,29 @@
 package com.jhorgi.koma.ui.screen.detail
 
-import android.app.Application
-import android.content.Context
+
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Icon
 import androidx.compose.material.IconToggleButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jhorgi.koma.di.Injection
 import com.jhorgi.koma.ui.ViewModelFactory
 import com.jhorgi.koma.ui.common.UiState
 import com.jhorgi.koma.R
 import com.jhorgi.koma.data.local.BookmarkList
+import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
+
 
 @Composable
 fun DetailScreen(
@@ -32,25 +35,26 @@ fun DetailScreen(
     ),
     navigateBack: () -> Unit,
 ) {
-    viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
-        when (uiState) {
-            is UiState.Loading -> {
-                viewModel.getItemById(id)
-            }
-            is UiState.Success -> {
-                val data = uiState.data
+    val context = LocalContext.current
 
-                viewModel.getRecipeById(data.item.id)
-
-                viewModel.uiState.collectAsState(initial = UiState.Loading).value
-                DetailContent(name = data.item.name, id = data.item.id, onBackClick = navigateBack, viewModel = viewModel)
-            }
-            is UiState.Error -> {}
+    val recipe by viewModel.recipeLiveData.observeAsState(initial = UiState.Loading)
+    when (recipe) {
+        is UiState.Loading -> {
+            Toast.makeText(context, "Loding", Toast.LENGTH_SHORT).show()
+            // Show loading state
+        }
+        is UiState.Success -> {
+            val recipe = (recipe as UiState.Success<RecipeByIdResponse>).data
+            DetailContent(viewModel = viewModel, name = recipe.data.title , id = recipe.data.id, onBackClick = { /*TODO*/ })
+            // Use the recipe data in your UI
+        }
+        is UiState.Error -> {
+            // Show error state or handle the error
         }
     }
-
-
-
+    LaunchedEffect(Unit) {
+        viewModel.getRecipeById(id)
+    }
 
 }
 
@@ -63,14 +67,15 @@ fun DetailContent(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ){
+
     Column {
-        Text(text = name)
+        Text(text = name,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.h5.copy(
+                fontWeight = FontWeight.ExtraBold
+            ),)
         Text(text = id.toString())
-
-        viewModel.getRecipeById(id)//request
-
         val isBookmared = viewModel.isBookmarked(id)
-
         BookmarkButton(viewModel,id, isBookmared)
     }
 }
@@ -86,8 +91,6 @@ fun BookmarkButton(
 ){
 
     var isBookmark by remember { mutableStateOf(isBookmarked) }
-
-
     IconToggleButton(
         checked = isBookmark ,
         onCheckedChange = {
@@ -124,6 +127,6 @@ fun BookmarkButton(
 //            },
 //            contentDescription = "Bookmark Button" ,
 //        )
-        
+
     }
 }

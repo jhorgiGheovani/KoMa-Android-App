@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class RecipeByIdResponse(
 
 	@field:SerializedName("data")
-	val data: Data? = null,
+	val data: Data,
 
 	@field:SerializedName("message")
 	val message: String? = null,
@@ -23,7 +23,7 @@ data class ListIngredientsItem(
 	val ingredient: String? = null,
 
 	@field:SerializedName("qty")
-	val qty: Int? = null,
+	val qty: Float? = null,
 
 	@field:SerializedName("desc")
 	val desc: String? = null
@@ -41,10 +41,10 @@ data class Data(
 	val images: List<String?>? = null,
 
 	@field:SerializedName("id")
-	val id: Int? = null,
+	val id: Int,
 
 	@field:SerializedName("title")
-	val title: String? = null,
+	val title: String,
 
 	@field:SerializedName("body")
 	val body: String? = null,

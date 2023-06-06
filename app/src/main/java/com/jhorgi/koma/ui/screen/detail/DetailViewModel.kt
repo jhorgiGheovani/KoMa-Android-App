@@ -18,17 +18,11 @@ import okhttp3.MultipartBody
 class DetailViewModel(
     private val repository: MainRepository
 ) : ViewModel() {
-    private val _uiState: MutableStateFlow<UiState<DataHomeList>> = MutableStateFlow(UiState.Loading)
+    private val _uiState: MutableStateFlow<UiState<RecipeByIdResponse>> = MutableStateFlow(UiState.Loading)
 
-    val uiState: StateFlow<UiState<DataHomeList>>
-        get() = _uiState
+    val uiState: StateFlow<UiState<RecipeByIdResponse>> get() = _uiState
 
-    fun getItemById(id: Int){
-        viewModelScope.launch {
-            _uiState.value=UiState.Loading
-            _uiState.value = UiState.Success(repository.getItemById(id))
-        }
-    }
+
 
 
     fun addBookmark(bookmarkList: BookmarkList){
@@ -42,14 +36,18 @@ class DetailViewModel(
     fun isBookmarked(id: Int):Boolean = repository.isBookmarked(id)
 
 //    private val postPhotoLiveData = MutableLiveData<UiState<PostPhoto>>()
-    private val recipeLiveData = MutableLiveData<UiState<RecipeByIdResponse>>()
-    fun getRecipeById(id: Int): LiveData<UiState<RecipeByIdResponse>>{
+    private val _recipeLiveData = MutableLiveData<UiState<RecipeByIdResponse>>()
+    val recipeLiveData : LiveData<UiState<RecipeByIdResponse>> get() = _recipeLiveData
+    fun getRecipeById(id: Int) {
         viewModelScope.launch {
-            val result = repository.getRecipeById(id)
-            recipeLiveData.value = result
+            try {
+                val detailRecipe = repository.getRecipeById(id)
+                _recipeLiveData.value = detailRecipe
+            } catch (e : Exception) {
+
+            }
 
         }
-        return recipeLiveData
     }
 
 

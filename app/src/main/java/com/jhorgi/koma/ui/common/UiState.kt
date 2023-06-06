@@ -1,6 +1,6 @@
 package com.jhorgi.koma.ui.common
 
-sealed class UiState<out T> private constructor() {
+sealed class UiState<out T: Any?>  {
 
     object Loading : UiState<Nothing>()
 

@@ -70,7 +70,7 @@ class MainRepository(
 
     suspend fun getRecipeById(id:Int): UiState<RecipeByIdResponse> {
         return try {
-            val response = apiService.getRecipeById(id = id)
+            val response = apiService.getRecipeById(id)
             UiState.Success(response)
         }catch (e : Exception) {
             UiState.Error(e.message.toString())
