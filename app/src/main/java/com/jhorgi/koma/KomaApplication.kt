@@ -130,10 +130,13 @@ fun KomaApplication(
                 HomeScreen(
                     navigateToDetail = { Id ->
                         navController.navigate(Screen.Detail.createRoute(Id))
+                    },
+                    navigateToProfile = {
+                        navController.navigate(Screen.Profile.route)
                     }
                 )
             }
-            composable("profile") {
+            composable(Screen.Profile.route) {
                 ProfileScreen()
             }
             composable(Screen.Camera.route) {

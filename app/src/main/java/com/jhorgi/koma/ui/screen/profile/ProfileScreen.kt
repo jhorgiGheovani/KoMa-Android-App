@@ -36,7 +36,7 @@ fun ProfileContent (
             style = MaterialTheme.typography.h1,
         )
         Spacer(modifier = Modifier.height(5.dp))
-        Row() {
+        Row {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.user) ,
                 contentDescription = "user"

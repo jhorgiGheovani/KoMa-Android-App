@@ -45,6 +45,7 @@ fun HomeScreen(
         )
     ),
     navigateToDetail: (String) -> Unit,
+    navigateToProfile: () -> Unit
 ) {
     viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
         when (uiState) {
@@ -52,7 +53,7 @@ fun HomeScreen(
                 viewModel.getAllItem()
             }
             is UiState.Success -> {
-                HomeContent(theData = uiState.data, modifier = modifier, navigateToDetail = navigateToDetail)
+                HomeContent(theData = uiState.data, modifier = modifier, navigateToDetail = navigateToDetail, navigateToProfile = navigateToProfile)
             }
             is UiState.Error -> {}
         }
@@ -66,6 +67,7 @@ fun HomeContent(
     theData: List<DataHomeList>,
     modifier: Modifier = Modifier,
     navigateToDetail: (String) -> Unit,
+    navigateToProfile: () -> Unit,
     navController: NavHostController = rememberNavController(),
 ) {
     LazyColumn(
@@ -75,7 +77,7 @@ fun HomeContent(
         )
     ) {
         item {
-            TopContent()
+            TopContent(navigateToProfile = navigateToProfile)
         }
         items(
             theData,
@@ -100,6 +102,7 @@ fun HomeContent(
 @Composable
 fun TopContent(
     navController: NavHostController = rememberNavController(),
+    navigateToProfile: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -119,7 +122,7 @@ fun TopContent(
         )
         IconButton(
             onClick = {
-                navController.navigate("profile")
+                navigateToProfile()
             }
         ) {
             Icon(
