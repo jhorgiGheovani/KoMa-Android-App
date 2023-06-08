@@ -70,7 +70,7 @@ fun KomaApplication(
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route) {
+            if (currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route && currentRoute != Screen.Profile.route) {
 //                BottomBar(navController)
                 BottomAppBar(
                     backgroundColor = Color.White,
@@ -84,7 +84,7 @@ fun KomaApplication(
         floatingActionButtonPosition = FabPosition.Center,
         isFloatingActionButtonDocked = true,
         floatingActionButton = {
-            if (currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route) {
+            if (currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route && currentRoute != Screen.Profile.route) {
                 FloatingActionButton(
                     shape = CircleShape,
                     backgroundColor = colorResource(id = R.color.primary_color),

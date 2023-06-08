@@ -129,7 +129,7 @@ fun TopContent(
                 imageVector = Icons.Sharp.AccountCircle,
                 tint = colorResource(id = R.color.grey_icons),
                 contentDescription = null,
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(40.dp)
             )
         }
 

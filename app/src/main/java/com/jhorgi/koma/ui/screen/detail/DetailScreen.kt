@@ -233,7 +233,8 @@ fun DetailContent(
     }
 
         val isBookmared = viewModel.isBookmarked(id)
-        BookmarkButton(viewModel,id, isBookmared)
+
+        BookmarkButton(viewModel = viewModel, id = id, isBookmarked = isBookmared)
     }
 }
 
