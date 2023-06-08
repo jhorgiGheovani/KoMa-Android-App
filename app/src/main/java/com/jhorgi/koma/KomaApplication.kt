@@ -46,6 +46,7 @@ import com.jhorgi.koma.ui.screen.camera.CameraScreen
 import com.jhorgi.koma.ui.screen.detail.DetailScreen
 import com.jhorgi.koma.ui.screen.gallery.GalleryScreen
 import com.jhorgi.koma.ui.screen.home.HomeScreen
+import com.jhorgi.koma.ui.screen.profile.ProfileScreen
 import com.jhorgi.koma.ui.screen.result.PostPhotoViewModel
 import com.jhorgi.koma.ui.utils.reduceFileImage
 import com.jhorgi.koma.ui.utils.uriToFile
@@ -132,6 +133,9 @@ fun KomaApplication(
                     }
                 )
             }
+            composable("profile") {
+                ProfileScreen()
+            }
             composable(Screen.Camera.route) {
                 CameraContent()
             }
@@ -175,6 +179,12 @@ fun BottomBar(
                 title = stringResource(R.string.menu_home),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_home),
                 screen = Screen.Home,
+
+            ),
+            NavigationItem(
+                title = "",
+                icon = ImageVector.vectorResource(id = R.drawable.gallery),
+                screen = Screen.Camera
             ),
             NavigationItem(
                 title = stringResource(R.string.menu_bookmark),
@@ -192,7 +202,10 @@ fun BottomBar(
                     )
                 },
                 label = {
-                    Text(item.title)
+                    Text(
+                        item.title,
+                        style = MaterialTheme.typography.body2
+                    )
                 },
 //                selected = item.title== navigationItems[0].title,
                 selected = currentRoute == item.screen.route,

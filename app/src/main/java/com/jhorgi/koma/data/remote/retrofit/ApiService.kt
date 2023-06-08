@@ -7,11 +7,11 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    @Headers("Content-Disposition: form-data")
+    @Headers("Content-Type: multipart/form-data")
     @Multipart
     @POST("/")
     suspend fun postPhoto(
-        @Part("file") file: MultipartBody.Part
+        @Part file: MultipartBody.Part
     ) : PostPhoto
 
     @GET("api/v1/recipe/{id}")

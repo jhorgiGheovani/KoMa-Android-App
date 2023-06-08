@@ -17,16 +17,16 @@ data class RecipeByIdResponse(
 data class ListIngredientsItem(
 
 	@field:SerializedName("unit")
-	val unit: String? = null,
+	val unit: String,
 
 	@field:SerializedName("ingredient")
-	val ingredient: String? = null,
+	val ingredient: String,
 
 	@field:SerializedName("qty")
-	val qty: Float? = null,
+	val qty: Float,
 
 	@field:SerializedName("desc")
-	val desc: String? = null
+	val desc: String
 )
 
 data class Data(
@@ -38,7 +38,7 @@ data class Data(
 	val createdAt: String? = null,
 
 	@field:SerializedName("images")
-	val images: List<String?>? = null,
+	val images: List<String>,
 
 	@field:SerializedName("id")
 	val id: Int,
@@ -50,7 +50,7 @@ data class Data(
 	val body: String? = null,
 
 	@field:SerializedName("listIngredients")
-	val listIngredients: List<ListIngredientsItem?>? = null,
+	val listIngredients: List<ListIngredientsItem>,
 
 	@field:SerializedName("updatedAt")
 	val updatedAt: String? = null

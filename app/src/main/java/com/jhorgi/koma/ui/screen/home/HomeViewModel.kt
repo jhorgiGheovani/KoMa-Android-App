@@ -1,8 +1,11 @@
 package com.jhorgi.koma.ui.screen.home
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jhorgi.koma.data.MainRepository
+import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
 import com.jhorgi.koma.model.DataHomeList
 import com.jhorgi.koma.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +30,19 @@ class HomeViewModel(
                 .collect{item->
                     _uiState.value=UiState.Success(item)
                 }
+        }
+    }
+    private val _recipeLiveData = MutableLiveData<UiState<RecipeByIdResponse>>()
+    val recipeLiveData : LiveData<UiState<RecipeByIdResponse>> get() = _recipeLiveData
+    fun getAllRecipeById(id: Int) {
+        viewModelScope.launch {
+            try {
+                val detailRecipe = repository.getRecipeById(id)
+                _recipeLiveData.value = detailRecipe
+            } catch (_: Exception) {
+
+            }
+
         }
     }
 }

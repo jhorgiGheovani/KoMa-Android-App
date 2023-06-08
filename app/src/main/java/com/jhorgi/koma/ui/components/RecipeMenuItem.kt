@@ -15,9 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.jhorgi.koma.R
 
 
@@ -49,6 +52,17 @@ fun RecipeMenuItem(
             modifier = Modifier
                 .fillMaxSize(),
         )
+//        AsyncImage(
+//            model = ImageRequest.Builder(LocalContext.current)
+//                .data(images)
+//                .crossfade(true)
+//                .build(),
+//            contentDescription = "Recipe Image",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .fillMaxHeight()
+//        )
 
         //Text Informasi Kalori
         Row(
@@ -68,9 +82,7 @@ fun RecipeMenuItem(
         Text(
             text = name,
             modifier = Modifier.align(Alignment.BottomCenter),
-            style = MaterialTheme.typography.h4.copy(
-                fontWeight = FontWeight.Bold
-            ),
+            style = MaterialTheme.typography.h1,
             color = Color.White
         )
 
