@@ -1,14 +1,12 @@
 package com.jhorgi.koma.ui.screen.detail
 
 
-import android.widget.Toast
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -25,24 +23,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.jhorgi.koma.di.Injection
-import com.jhorgi.koma.ui.ViewModelFactory
-import com.jhorgi.koma.ui.common.UiState
 import com.jhorgi.koma.R
 import com.jhorgi.koma.data.local.BookmarkList
 import com.jhorgi.koma.data.remote.response.ListIngredientsItem
 import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
+import com.jhorgi.koma.di.Injection
+import com.jhorgi.koma.ui.ViewModelFactory
+import com.jhorgi.koma.ui.common.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -58,10 +54,6 @@ fun DetailScreen(
     ),
     navigateBack: () -> Unit,
 ) {
-    val context = LocalContext.current
-    var isLoading by remember {
-        mutableStateOf(true)
-    }
     val recipe by viewModel.recipeLiveData.observeAsState(initial = UiState.Loading)
     when (recipe) {
         is UiState.Loading -> {

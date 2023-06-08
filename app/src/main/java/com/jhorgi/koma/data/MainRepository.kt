@@ -76,6 +76,19 @@ class MainRepository(
             UiState.Error(e.message.toString())
         }
     }
+
+    suspend fun getRecipeById2 (id: Int): RecipeByIdResponse{
+        return apiService.getRecipeById(id)
+    }
+    fun getAllBookmark(): List<BookmarkList>{
+        val result = CompletableDeferred<List<BookmarkList>>()
+
+        coroutineScope.launch(Dispatchers.IO) {
+            val getValue = bookmarkDao.getAllBookmark()
+            result.complete(getValue)
+        }
+        return runBlocking { result.await() }
+    }
 //    fun getStoryDetail(token: String, id: String): LiveData<Result<DetailStoryResponse>> =
 //        liveData {
 //            emit(Result.Loading)

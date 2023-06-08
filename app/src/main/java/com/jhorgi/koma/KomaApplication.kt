@@ -143,7 +143,10 @@ fun KomaApplication(
                 CameraContent()
             }
             composable(Screen.Bookmark.route) {
-                BookmarkScreen()
+                BookmarkScreen(
+                    navigateToDetail = { Id ->
+                        navController.navigate(Screen.Detail.createRoute(Id))
+                    })
             }
             composable(
                 route = Screen.Detail.route,
