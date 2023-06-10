@@ -1,5 +1,6 @@
 package com.jhorgi.koma.ui.screen.bookmark
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -17,6 +18,7 @@ import com.jhorgi.koma.R
 import com.jhorgi.koma.di.Injection
 import com.jhorgi.koma.ui.ViewModelFactory
 import com.jhorgi.koma.ui.components.BookmarkItem
+import com.jhorgi.koma.ui.theme.poppins
 
 
 @Composable
@@ -49,6 +51,7 @@ fun BookmarkScreen(
 private fun BookmarkTittle() {
     Text(
         text = "Bookmarks",
+        fontFamily = poppins,
         color = colorResource(id = R.color.grey_tittle_color),
         style = MaterialTheme.typography.h5.copy(
             fontWeight = FontWeight.Bold

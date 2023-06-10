@@ -39,6 +39,7 @@ import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
 import com.jhorgi.koma.di.Injection
 import com.jhorgi.koma.ui.ViewModelFactory
 import com.jhorgi.koma.ui.common.UiState
+import com.jhorgi.koma.ui.theme.poppins
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -68,15 +69,15 @@ fun DetailScreen(
                 Spacer(modifier = Modifier.width(16.dp))
         }
         is UiState.Success -> {
-            val recipe = (recipe as UiState.Success<RecipeByIdResponse>).data
+            val recipeResult = (recipe as UiState.Success<RecipeByIdResponse>).data
             DetailContent(
                 viewModel = viewModel,
-                imageUrl = recipe.data.images,
-                name = recipe.data.title ,
-                id = recipe.data.id,
-                body = recipe.data.body.toString(),
-                ingredients = recipe.data.listIngredients,
-                instructions = recipe.data.instructions.toString(),
+                imageUrl = recipeResult.data.images,
+                name = recipeResult.data.title ,
+                id = recipeResult.data.id,
+                body = recipeResult.data.body.toString(),
+                ingredients = recipeResult.data.listIngredients,
+                instructions = recipeResult.data.instructions.toString(),
             )
         }
         is UiState.Error -> {
@@ -145,18 +146,21 @@ fun DetailContent(
                     text = name,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.body1.copy(
-                        fontWeight = FontWeight.ExtraBold
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.ExtraBold,
                     ),
                     modifier = Modifier.padding(bottom = 15.dp)
                 )
                 Text(
                     text = body,
+                    fontFamily = poppins,
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.body2
                 )
                 Row ( modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)) {
                     Text(
                         text = "Ingredients",
+                        fontFamily = poppins,
                         textAlign = TextAlign.Start,
                         style = MaterialTheme.typography.body1
                     )
@@ -181,11 +185,13 @@ fun DetailContent(
                             Spacer(modifier = Modifier.width(3.dp))
                             Column {
                                 Text(
+                                    fontFamily = poppins,
                                     text = data.ingredient,
                                     style = MaterialTheme.typography.body2
                                 )
                                 Spacer(modifier = Modifier.height(5.dp))
                                 Text(
+                                    fontFamily = poppins,
                                     text = data.desc,
                                     color = Color.Gray,
                                     style = MaterialTheme.typography.body2
@@ -197,6 +203,7 @@ fun DetailContent(
                     }
                     Row ( modifier = Modifier.padding(top = 15.dp, bottom = 15.dp)) {
                         Text(
+                            fontFamily = poppins,
                             text = "Instructions",
                             textAlign = TextAlign.Start,
                             style = MaterialTheme.typography.body1
@@ -211,6 +218,7 @@ fun DetailContent(
 
                     Text(
                         text = instructions,
+                        fontFamily = poppins,
                         textAlign = TextAlign.Start,
                         style = MaterialTheme.typography.body2
                     )
@@ -230,11 +238,14 @@ fun DetailContent(
                     .fillMaxWidth()
                     .fillMaxHeight()
             )
+            val isBookmared = viewModel.isBookmarked(id)
+
+            BookmarkButton(viewModel = viewModel, id = id, isBookmarked = isBookmared)
     }
 
-        val isBookmared = viewModel.isBookmarked(id)
-
-        BookmarkButton(viewModel = viewModel, id = id, isBookmarked = isBookmared)
+//        val isBookmared = viewModel.isBookmarked(id)
+//
+//        BookmarkButton(viewModel = viewModel, id = id, isBookmarked = isBookmared)
     }
 }
 

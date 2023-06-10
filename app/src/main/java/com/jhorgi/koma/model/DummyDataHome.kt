@@ -4,8 +4,8 @@ import com.jhorgi.koma.R
 
 object DummyDataHome {
     val dummydata= listOf(
-        DataHome(42,"Sate","100kccal", R.drawable.sate),
-        DataHome(43,"Sate","200kccal", R.drawable.sate),
+        DataHome(5,"Sate","100kccal", R.drawable.sate),
+        DataHome(1,"Sate","200kccal", R.drawable.sate),
 
     )
 }

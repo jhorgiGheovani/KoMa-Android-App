@@ -13,7 +13,9 @@ object Injection {
         val database = BookmarkRoomDatabase.getDatabase(context)
         val dao = database.bookmarkDao()
         val apiService = ApiConfig.getApiService()
-        return MainRepository(dao,apiService)
+        val apiSefvicePredict = ApiConfig.getApiServicePredict()
+
+        return MainRepository(dao,apiService, apiSefvicePredict)
 
     }
 }

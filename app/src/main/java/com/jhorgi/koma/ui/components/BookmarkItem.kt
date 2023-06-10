@@ -16,9 +16,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import com.jhorgi.koma.ui.theme.poppins
 
 @Composable
 fun BookmarkItem(
@@ -43,7 +45,7 @@ fun BookmarkItem(
                 modifier = modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .border(1.dp, Color.LightGray,RoundedCornerShape(10.dp) ),
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(10.dp)),
                 contentScale = ContentScale.FillHeight,
 
                 ) {
@@ -60,13 +62,16 @@ fun BookmarkItem(
             Column {
                 Text(
                     text = name,
+                    fontFamily = poppins,
                     style = MaterialTheme.typography.caption.copy(
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.ExtraBold,
                     ),
+
                 )
-                Spacer(modifier = modifier.height(3.dp))
+                Spacer(modifier = modifier.height(1.dp))
                 Text(
                     text = desc,
+                    fontFamily = poppins,
                     style = MaterialTheme.typography.caption.copy(
                         fontWeight = FontWeight.Light
                     ),
