@@ -1,1 +1,0 @@
-# KoMa-Android-App
