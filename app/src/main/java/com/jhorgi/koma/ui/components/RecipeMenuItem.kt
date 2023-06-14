@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -28,65 +29,70 @@ import com.jhorgi.koma.R
 fun RecipeMenuItem(
     name: String,
     calories: String,
-    @DrawableRes images: Int,
+    image : String,
     modifier: Modifier = Modifier
 ) {
-
-    Box(
-        modifier = modifier
-            .height(130.dp)
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
             .fillMaxWidth()
             .padding(
                 bottom = 15.dp,
                 end = 10.dp,
                 start = 10.dp
             )
-            .clip(shape = RoundedCornerShape(7.dp))
-            .border(3.dp, Color.Black)
-    ) {
-        //Images Background
-        Image(
-            painter = painterResource(images),
-            contentDescription = "images",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize(),
-        )
-//        AsyncImage(
-//            model = ImageRequest.Builder(LocalContext.current)
-//                .data(images)
-//                .crossfade(true)
-//                .build(),
-//            contentDescription = "Recipe Image",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .fillMaxHeight()
-//        )
+            .border(1.dp, Color.Black,shape = RoundedCornerShape(7.dp))
 
-        //Text Informasi Kalori
-        Row(
-            modifier = Modifier
-                .padding(5.dp)
-                .align(Alignment.TopEnd)
-                .clip(shape = RoundedCornerShape(10.dp))
-                .background(Color(0x8AD9D9D9))
+    ) {
+        Box(
+            modifier = modifier
+                .height(200.dp)
+                .fillMaxWidth()
 
         ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(image)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Recipe Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .clip(shape = RoundedCornerShape(7.dp))
+            )
+            //Text Informasi Kalori
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.TopEnd)
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .background(Color(0x8AD9D9D9))
 
-            Icon(painter = painterResource(R.drawable.ic_calories), contentDescription = null)
-            Text(text = calories, modifier = Modifier.padding(end = 5.dp))
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_calories),
+                    contentDescription = null,
+                    modifier = Modifier.padding(start = 3.dp, top = 8.dp, end = 5.dp)
+                )
+                Text(text = calories +"kcal", modifier = Modifier.padding(top = 5.dp, end = 8.dp))
+            }
         }
-
-        //Text Nama Menu
+        Spacer(modifier = Modifier.height(5.dp))
         Text(
+            modifier = Modifier.padding(5.dp),
+            textAlign = TextAlign.Center,
             text = name,
-            modifier = Modifier.align(Alignment.BottomCenter),
-            style = MaterialTheme.typography.h1,
-            color = Color.White
+            style = MaterialTheme.typography.body1,
+            color = Color.Black
         )
-
+        Spacer(modifier = Modifier.height(10.dp))
     }
 
 
+
+
 }
+
+

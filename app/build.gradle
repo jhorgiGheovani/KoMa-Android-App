@@ -89,4 +89,11 @@ dependencies {
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-beta01'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
+
+    implementation 'com.airbnb.android:lottie-compose:4.2.0'
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
+
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
+
+
 }

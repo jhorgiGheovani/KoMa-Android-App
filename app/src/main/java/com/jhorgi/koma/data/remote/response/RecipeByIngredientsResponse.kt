@@ -23,5 +23,8 @@ data class DataItem(
 	val id: Int,
 
 	@field:SerializedName("title")
-	val title: String
+	val title: String,
+
+	@field:SerializedName("calories")
+	val calories: Any? = null,
 )

@@ -1,14 +1,19 @@
 package com.jhorgi.koma.data.remote.retrofit
 
-import com.jhorgi.koma.data.remote.response.PostPhoto
-import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
-import com.jhorgi.koma.data.remote.response.RecipeByIngredientsResponse
+import com.jhorgi.koma.data.remote.response.*
+import com.jhorgi.koma.data.remote.response.forgotpassword.ForgotPasswordRequestBody
+import com.jhorgi.koma.data.remote.response.forgotpassword.ResetPasswordRequestBody
+import com.jhorgi.koma.data.remote.response.login.LoginRequestBody
+import com.jhorgi.koma.data.remote.response.login.LoginResponse
+import com.jhorgi.koma.data.remote.response.otp.InputOtpRequestBody
+import com.jhorgi.koma.data.remote.response.otp.InputOtpRespose
+import com.jhorgi.koma.data.remote.response.register.RegisterRequestBody
 import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface ApiService {
 
-//    @Headers("Content-Type: multipart/form-data")
+//  Home
     @Multipart
     @POST("/")
     suspend fun postPhoto(
@@ -24,5 +29,34 @@ interface ApiService {
     suspend fun getRecipeByIngredient(
         @Query("ingredient") ingredient : String
     ): RecipeByIngredientsResponse
+
+    @GET("api/v1/recipe/random")
+    suspend fun getRecipeRandom(): RecipeRandomResponse
+
+// Auth
+    @POST("api/v1/auth/login")
+    suspend fun loginUser(
+        @Body requestBody: LoginRequestBody
+    ): LoginResponse
+
+    @POST("api/v1/auth/register")
+    suspend fun registerUser (
+        @Body requestBody: RegisterRequestBody
+    ): GenericResponse
+
+    @POST("api/v1/user/otpgen")
+    suspend fun emailForgotPassword (
+        @Body requestBody: ForgotPasswordRequestBody
+    ): GenericResponse
+
+    @POST("api/v1/user/otpver")
+    suspend fun inputOtp (
+        @Body requestBody: InputOtpRequestBody
+    ): InputOtpRespose
+
+    @POST("api/v1/user/resetpassword")
+    suspend fun resetPassword (
+        @Body requestBody: ResetPasswordRequestBody
+    ): GenericResponse
 
 }

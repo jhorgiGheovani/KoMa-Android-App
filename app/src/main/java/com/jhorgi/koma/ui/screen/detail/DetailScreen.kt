@@ -6,8 +6,10 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,9 +42,12 @@ import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
 import com.jhorgi.koma.di.Injection
 import com.jhorgi.koma.ui.ViewModelFactory
 import com.jhorgi.koma.ui.common.UiState
+import com.jhorgi.koma.ui.components.BackButtonItem
+import com.jhorgi.koma.ui.components.LottieLoadingItem
 import com.jhorgi.koma.ui.theme.poppins
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.sql.RowId
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,15 +64,30 @@ fun DetailScreen(
     val recipe by viewModel.recipeLiveData.observeAsState(initial = UiState.Loading)
     when (recipe) {
         is UiState.Loading -> {
-                Box(
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .fillMaxHeight()
+//                        .padding(8.dp)
+//                        .shimmerEffect(),
+//
+//                )
+//                Spacer(modifier = Modifier.width(16.dp))
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                LottieLoadingItem(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(8.dp)
-                        .shimmerEffect(),
-
                 )
-                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = "Please wait...",
+                    style = MaterialTheme.typography.body2,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
         is UiState.Success -> {
             val recipeResult = (recipe as UiState.Success<RecipeByIdResponse>).data
@@ -78,6 +99,7 @@ fun DetailScreen(
                 body = recipeResult.data.body.toString(),
                 ingredients = recipeResult.data.listIngredients,
                 instructions = recipeResult.data.instructions.toString(),
+                navigateBack = navigateBack
             )
         }
         is UiState.Error -> {
@@ -86,7 +108,6 @@ fun DetailScreen(
     }
     LaunchedEffect(Unit) {
         viewModel.getRecipeById(id)
-        delay(10000)
     }
 
 }
@@ -103,6 +124,7 @@ fun DetailContent(
     body : String,
     ingredients : List<ListIngredientsItem>,
     instructions : String,
+    navigateBack: () -> Unit,
 
 ){
 
@@ -238,9 +260,40 @@ fun DetailContent(
                     .fillMaxWidth()
                     .fillMaxHeight()
             )
-            val isBookmared = viewModel.isBookmarked(id)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                val isBookmared = viewModel.isBookmarked(id)
+                val transparentColor = Color.Transparent.copy(alpha = 0.25f)
+                Box(
+                    modifier = Modifier
+                        .padding(3.dp)
+                        .background(transparentColor, shape = CircleShape),
+                ) {
+                    IconButton(onClick = {
+                        navigateBack()
+                    }) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.arrow_left),
+                            contentDescription = "arrow_left",
+                            tint = Color.White
+                        )
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .padding(3.dp)
+                        .background(transparentColor, shape = CircleShape),
+                ) {
+                    BookmarkButton(viewModel = viewModel, id = id, isBookmarked = isBookmared)
+                }
 
-            BookmarkButton(viewModel = viewModel, id = id, isBookmarked = isBookmared)
+            }
+
     }
 
 //        val isBookmared = viewModel.isBookmarked(id)
@@ -249,14 +302,17 @@ fun DetailContent(
     }
 }
 
+
+
+
 @Composable
 fun BookmarkButton(
     viewModel: DetailViewModel,
     id: Int,
     isBookmarked :Boolean,
     modifier: Modifier = Modifier,
-    color: Color = Color(0xFFCBDB2B),
-    borderColor: Color = Color(0xFF6B7070)
+    color: Color = colorResource(id = R.color.primary_color),
+    borderColor: Color = colorResource(id = R.color.white)
 ){
 
     var isBookmark by remember { mutableStateOf(isBookmarked) }
@@ -299,6 +355,7 @@ fun BookmarkButton(
 
     }
 }
+
 fun Modifier.shimmerEffect(): Modifier = composed {
     var size by remember {
         mutableStateOf(IntSize.Zero)

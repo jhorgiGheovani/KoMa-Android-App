@@ -1,7 +1,8 @@
 package com.jhorgi.koma
 
 import android.net.Uri
-import android.transition.Scene
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -30,8 +31,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.jhorgi.koma.ui.navigation.AUTH_GRAPH_ROUTE
 import com.jhorgi.koma.ui.navigation.NavigationItem
+import com.jhorgi.koma.ui.navigation.ROOT_GRAPH_ROUTE
 import com.jhorgi.koma.ui.navigation.Screen
+import com.jhorgi.koma.ui.navigation.nav_graph.authNavGraph
+import com.jhorgi.koma.ui.navigation.nav_graph.homeNavGraph
 import com.jhorgi.koma.ui.screen.bookmark.BookmarkScreen
 import com.jhorgi.koma.ui.screen.camera.CameraContent
 import com.jhorgi.koma.ui.screen.detail.DetailScreen
@@ -54,12 +59,19 @@ fun KomaApplication(
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route && currentRoute != Screen.Profile.route) {
+            if (
+                currentRoute == Screen.Home.route || currentRoute == Screen.Bookmark.route
+//                currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route &&
+//                currentRoute != Screen.Profile.route && currentRoute != Screen.Result.route &&
+//                currentRoute != Screen.Login.route
+            ) {
 //                BottomBar(navController)
                 BottomAppBar(
                     backgroundColor = Color.White,
                     cutoutShape = CircleShape,
-                    modifier = Modifier.background(colorResource(id = R.color.light_grey_super))
+                    modifier = Modifier
+                        .background(colorResource(id = R.color.white))
+                        .border(0.5.dp, Color.Gray)
                 ) {
                     BottomBar(navController)
                 }
@@ -68,111 +80,69 @@ fun KomaApplication(
         floatingActionButtonPosition = FabPosition.Center,
         isFloatingActionButtonDocked = true,
         floatingActionButton = {
-            if (currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route && currentRoute != Screen.Profile.route) {
-                FloatingActionButton(
-                    shape = CircleShape,
-                    backgroundColor = colorResource(id = R.color.primary_color),
-                    contentColor = Color.White,
-                    modifier = modifier
-                        .size(60.dp)
-                        .border(2.dp, Color.Green, CircleShape),
-                    onClick = {
-                        Screen.Camera.route.let {
-                            navController.navigate(it) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+            if (
+                currentRoute == Screen.Home.route || currentRoute == Screen.Bookmark.route || currentRoute == Screen.Result.route
+//                currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route && currentRoute != Screen.Profile.route
+            ) {
+                Column(
+                    modifier = Modifier.padding(top = 30.dp)
+                ) {
+                    FloatingActionButton(
+                        shape = CircleShape,
+                        backgroundColor = colorResource(id = R.color.primary_color),
+                        contentColor = Color.White,
+                        modifier = modifier
+                            .size(60.dp)
+                            .border(2.dp, Color.Green, CircleShape),
+                        onClick = {
+                            Screen.Camera.route.let {
+                                navController.navigate(it) {
+                                    popUpTo(Screen.Camera.route) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
+                                navController.popBackStack()
                             }
+                            Screen.Camera.route.let {navController.navigate(it)}
+//                                navController.popBackStack()
+                        }
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_camera),
+                                contentDescription = null
+                            )
+                            Text(text = "Take", fontSize = 9.sp)
                         }
 
-                        Screen.Camera.route.let { navController.navigate(it) }
-
                     }
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_camera),
-                            contentDescription = null
-                        )
-                        Text(text = "Take", fontSize = 9.sp)
-                    }
-
-
                 }
+
 
             }
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = AUTH_GRAPH_ROUTE,
+            route = ROOT_GRAPH_ROUTE,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Home.route) {
-                HomeScreen(
-                    navigateToDetail = { Id ->
-                        navController.navigate(Screen.Detail.createRoute(Id))
-                    },
-                    navigateToProfile = {
-                        navController.navigate(Screen.Profile.route)
-                    }
-                )
-            }
-            composable(
-                route = Screen.Result.route,
-                arguments = listOf(navArgument("ingredient") {type = NavType.StringType})
-            ) {
-                val naving = it.arguments?.getString("ingredient")
-                ResultScreen(
-                    ingredient = naving!!,
-                    navigateToDetail = { Id ->
-                    navController.navigate(Screen.Detail.createRoute(Id))
-                })
-            }
-            composable(Screen.Profile.route) {
-                ProfileScreen()
-            }
-            composable(Screen.Camera.route) {
-                CameraContent(navigationToResult = { ingredient ->
-                    navController.navigate(Screen.Result.createRoute(ingredient))
-                })
-            }
-            composable(Screen.Bookmark.route) {
-                BookmarkScreen(
-                    navigateToDetail = { Id ->
-                        navController.navigate(Screen.Detail.createRoute(Id))
-                    })
-            }
-            composable(
-                route = Screen.Detail.route,
-                arguments = listOf(navArgument("Id") { type = NavType.IntType })
-            ) {
-                val navid = it.arguments?.getInt("Id")
-                if (navid != null) {
-                    DetailScreen(
-                        id = navid,
-                        navigateBack = {
-                            navController.navigateUp()
-                        },
-                    )
-                }
-            }
+            homeNavGraph(navController = navController)
+            authNavGraph(navController = navController)
         }
-
     }
-
 }
 
 @Composable
 fun BottomBar(
     navController: NavHostController,
-    modifier: Modifier = Modifier
 ) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.background,
         contentColor = Color.Black,
+        elevation = 0.dp
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
@@ -192,7 +162,7 @@ fun BottomBar(
             NavigationItem(
                 title = stringResource(R.string.menu_bookmark),
                 icon = ImageVector.vectorResource(id = R.drawable.ic_bookmark_border),
-                screen = Screen.Bookmark
+                screen = Screen.Bookmark,
             ),
         )
 
@@ -223,12 +193,8 @@ fun BottomBar(
                 }
             )
         }
-
-
     }
 }
-
-
 val EMPTY_IMAGE_URI: Uri = Uri.parse("file://dev/null")
 
 

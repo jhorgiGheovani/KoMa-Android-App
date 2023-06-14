@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -18,6 +19,8 @@ import com.jhorgi.koma.R
 import com.jhorgi.koma.di.Injection
 import com.jhorgi.koma.ui.ViewModelFactory
 import com.jhorgi.koma.ui.components.BookmarkItem
+import com.jhorgi.koma.ui.components.LottieEmptyItem
+import com.jhorgi.koma.ui.components.LottieLoadingItem
 import com.jhorgi.koma.ui.theme.poppins
 
 
@@ -32,19 +35,36 @@ fun BookmarkScreen(
     Column(modifier = Modifier.padding(top = 15.dp)) {
         BookmarkTittle()
         Spacer(modifier = Modifier.height(15.dp))
-        viewModel.getAllBookmark().map {
-            val data = viewModel.getRecipeById(it.id)
-            BookmarkItem(
-                name = data.data.title,
-                desc = data.data.body.toString(),
-                photoUrl = data.data.images?.get(0).toString(),
-                navigateToDetail = navigateToDetail,
-                id = data.data.id
-            )
+        val result = viewModel.getAllBookmark()
+        if (result.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                LottieEmptyItem(modifier = Modifier)
+                Text(
+                    modifier = Modifier.padding(top = 300.dp),
+                    text = "No data",
+                    style = MaterialTheme.typography.body2,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
+                )
+
+            }
+        } else {
+            result.map {
+                val data = viewModel.getRecipeById(it.id)
+                BookmarkItem(
+                    name = data.data.title,
+                    desc = data.data.body.toString(),
+                    photoUrl = data.data.images?.get(0).toString(),
+                    navigateToDetail = navigateToDetail,
+                    id = data.data.id
+                )
+
+            }
         }
     }
-
-
 }
 
 @Composable
@@ -58,7 +78,5 @@ private fun BookmarkTittle() {
         ),
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center
-
-
     )
 }

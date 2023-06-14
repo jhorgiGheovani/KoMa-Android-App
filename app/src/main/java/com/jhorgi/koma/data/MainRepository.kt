@@ -1,11 +1,18 @@
 package com.jhorgi.koma.data
 
 
+import android.content.Context
 import com.jhorgi.koma.data.local.BookmarkDao
 import com.jhorgi.koma.data.local.BookmarkList
-import com.jhorgi.koma.data.remote.response.PostPhoto
-import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
-import com.jhorgi.koma.data.remote.response.RecipeByIngredientsResponse
+import com.jhorgi.koma.data.local.LocalDataPreference
+import com.jhorgi.koma.data.remote.response.*
+import com.jhorgi.koma.data.remote.response.forgotpassword.ForgotPasswordRequestBody
+import com.jhorgi.koma.data.remote.response.forgotpassword.ResetPasswordRequestBody
+import com.jhorgi.koma.data.remote.response.login.LoginRequestBody
+import com.jhorgi.koma.data.remote.response.login.LoginResponse
+import com.jhorgi.koma.data.remote.response.otp.InputOtpRequestBody
+import com.jhorgi.koma.data.remote.response.otp.InputOtpRespose
+import com.jhorgi.koma.data.remote.response.register.RegisterRequestBody
 import com.jhorgi.koma.data.remote.retrofit.ApiService
 import com.jhorgi.koma.model.DataHomeList
 import com.jhorgi.koma.model.DummyDataHome
@@ -37,9 +44,13 @@ class MainRepository(
     }
 
     //===========================================================================
-    suspend fun postPhoto(photo: MultipartBody.Part): PostPhoto {
-        val response = apiServicePredict.postPhoto(photo)
-        return response
+    suspend fun postPhoto(photo: MultipartBody.Part): UiState<PostPhoto> {
+        return try {
+            val response = apiServicePredict.postPhoto(photo)
+            UiState.Success(response)
+        } catch (e: Exception) {
+            UiState.Error(e.message.toString())
+        }
     }
 
 
@@ -59,6 +70,14 @@ class MainRepository(
     suspend fun getRecipeByIngredient(ingredient : String): UiState<RecipeByIngredientsResponse> {
         return try {
             val response = apiService.getRecipeByIngredient(ingredient)
+            UiState.Success(response)
+        } catch (e: Exception) {
+            UiState.Error(e.message.toString())
+        }
+    }
+    suspend fun getRecipeRandom(): UiState<RecipeRandomResponse> {
+        return try {
+            val response = apiService.getRecipeRandom()
             UiState.Success(response)
         } catch (e: Exception) {
             UiState.Error(e.message.toString())
@@ -102,6 +121,68 @@ class MainRepository(
         }
 
         return runBlocking { result.await() }
+    }
+
+
+// Auth Repository
+    suspend fun login(email: String, password: String): UiState<LoginResponse>{
+        return try {
+            val response = apiService.loginUser(LoginRequestBody(email,password))
+            UiState.Success(response)
+        }catch (e: Exception){
+            UiState.Error(e.message.toString())
+        }
+
+    }
+
+
+    suspend fun registrasi(data: RegisterRequestBody): UiState<GenericResponse>{
+        return try {
+            val response = apiService.registerUser(data)
+            UiState.Success(response)
+        }catch (e: Exception){
+            UiState.Error(e.message.toString())
+        }
+
+    }
+
+    suspend fun emailForgotPassword(email: String): UiState<GenericResponse>{
+        return try {
+            val response = apiService.emailForgotPassword(ForgotPasswordRequestBody(email))
+            UiState.Success(response)
+        }catch (e: Exception){
+            UiState.Error(e.message.toString())
+        }
+
+    }
+
+    suspend fun inputOtp(otp: String): UiState<InputOtpRespose>{
+        return try {
+            val response = apiService.inputOtp(InputOtpRequestBody(otp))
+            UiState.Success(response)
+        }catch (e: Exception){
+            UiState.Error(e.message.toString())
+        }
+
+    }
+
+    suspend fun resetPassword(data: ResetPasswordRequestBody): UiState<GenericResponse>{
+        return try {
+            val response = apiService.resetPassword(data)
+            UiState.Success(response)
+        }catch (e: Exception){
+            UiState.Error(e.message.toString())
+        }
+
+    }
+    fun saveToken(token: String, context: Context){
+        val localDataPreference = LocalDataPreference(context)
+        localDataPreference.setToken(token)
+    }
+
+    fun getToken(context: Context): String? {
+        val settingPreference = LocalDataPreference(context)
+        return settingPreference.getToken()
     }
 
     companion object {
