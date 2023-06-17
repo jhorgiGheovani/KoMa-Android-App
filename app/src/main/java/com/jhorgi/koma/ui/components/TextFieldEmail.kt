@@ -24,7 +24,7 @@ fun TextFieldEmail(textInput: String, onTextInputChange: (String) -> Unit, place
         value = textInput,
         onValueChange = onTextInputChange,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        placeholder = { Text(text = placeholder) },
+        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.caption) },
         leadingIcon = {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.atsign),

@@ -1,8 +1,6 @@
 package com.jhorgi.koma
 
 import android.net.Uri
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -23,26 +21,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.jhorgi.koma.ui.navigation.AUTH_GRAPH_ROUTE
-import com.jhorgi.koma.ui.navigation.NavigationItem
-import com.jhorgi.koma.ui.navigation.ROOT_GRAPH_ROUTE
-import com.jhorgi.koma.ui.navigation.Screen
+import com.jhorgi.koma.ui.navigation.*
 import com.jhorgi.koma.ui.navigation.nav_graph.authNavGraph
 import com.jhorgi.koma.ui.navigation.nav_graph.homeNavGraph
-import com.jhorgi.koma.ui.screen.bookmark.BookmarkScreen
-import com.jhorgi.koma.ui.screen.camera.CameraContent
-import com.jhorgi.koma.ui.screen.detail.DetailScreen
-import com.jhorgi.koma.ui.screen.home.HomeScreen
-import com.jhorgi.koma.ui.screen.profile.ProfileScreen
-import com.jhorgi.koma.ui.screen.result.ResultScreen
+import com.jhorgi.koma.ui.navigation.nav_graph.splashNavGraph
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
@@ -61,11 +48,7 @@ fun KomaApplication(
         bottomBar = {
             if (
                 currentRoute == Screen.Home.route || currentRoute == Screen.Bookmark.route
-//                currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route &&
-//                currentRoute != Screen.Profile.route && currentRoute != Screen.Result.route &&
-//                currentRoute != Screen.Login.route
             ) {
-//                BottomBar(navController)
                 BottomAppBar(
                     backgroundColor = Color.White,
                     cutoutShape = CircleShape,
@@ -82,7 +65,6 @@ fun KomaApplication(
         floatingActionButton = {
             if (
                 currentRoute == Screen.Home.route || currentRoute == Screen.Bookmark.route || currentRoute == Screen.Result.route
-//                currentRoute != Screen.Detail.route && currentRoute != Screen.Camera.route && currentRoute != Screen.Profile.route
             ) {
                 Column(
                     modifier = Modifier.padding(top = 30.dp)
@@ -105,7 +87,6 @@ fun KomaApplication(
                                 navController.popBackStack()
                             }
                             Screen.Camera.route.let {navController.navigate(it)}
-//                                navController.popBackStack()
                         }
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -125,12 +106,13 @@ fun KomaApplication(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = AUTH_GRAPH_ROUTE,
+            startDestination = SPLASH_GRAPH_ROUTE,
             route = ROOT_GRAPH_ROUTE,
             modifier = Modifier.padding(innerPadding)
         ) {
             homeNavGraph(navController = navController)
             authNavGraph(navController = navController)
+            splashNavGraph(navController = navController)
         }
     }
 }

@@ -1,13 +1,10 @@
 package com.jhorgi.koma.ui.screen.camera
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
@@ -40,16 +37,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
-import com.airbnb.lottie.LottieAnimationView
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jhorgi.koma.EMPTY_IMAGE_URI
 import com.jhorgi.koma.R
 import com.jhorgi.koma.data.remote.response.PostPhoto
-import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
 import com.jhorgi.koma.di.Injection
 import com.jhorgi.koma.ui.ViewModelFactory
 import com.jhorgi.koma.ui.common.UiState
@@ -165,8 +156,6 @@ fun CameraContent(
     val isLoading = remember { mutableStateOf(false) }
     var getFile: File?
     val context1 = LocalContext.current
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     var imageUri by remember { mutableStateOf(EMPTY_IMAGE_URI) }
 
     if (imageUri != EMPTY_IMAGE_URI) {

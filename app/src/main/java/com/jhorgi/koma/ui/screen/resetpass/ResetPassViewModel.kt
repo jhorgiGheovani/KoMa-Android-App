@@ -21,7 +21,7 @@ class ResetPasswordViewModel(private val repository: MainRepository) : ViewModel
             try {
                 val response = repository.resetPassword(data)
                 _resetPasswordLiveData.value = response
-            }catch (e: Exception){
+            }catch (_: Exception){
 
             }
         }

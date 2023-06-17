@@ -22,7 +22,7 @@ class LoginViewModel(private val repository: MainRepository) : ViewModel() {
             try {
                 val response = repository.login(email,password)
                 _loginLiveData.value = response
-            }catch (e: Exception){
+            }catch (_: Exception){
 
             }
         }

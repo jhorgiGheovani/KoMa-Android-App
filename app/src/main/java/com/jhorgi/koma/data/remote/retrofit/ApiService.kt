@@ -30,6 +30,11 @@ interface ApiService {
         @Query("ingredient") ingredient : String
     ): RecipeByIngredientsResponse
 
+    @GET("/api/v1/user/detail")
+    suspend fun getDetailUser(
+        @Header("Authorization")Token: String,
+    ): GetUserDetailResponse
+
     @GET("api/v1/recipe/random")
     suspend fun getRecipeRandom(): RecipeRandomResponse
 
@@ -57,6 +62,18 @@ interface ApiService {
     @POST("api/v1/user/resetpassword")
     suspend fun resetPassword (
         @Body requestBody: ResetPasswordRequestBody
+    ): GenericResponse
+
+    @PUT("api/v1/user/detail/update")
+    suspend fun updateProfile (
+        @Header("Authorization")Token: String,
+        @Body requestBody: UpdateProfileRequestBody
+    ): GenericResponse
+
+    @POST("api/v1/user/changepassword")
+    suspend fun changePassword (
+        @Header("Authorization")Token: String,
+        @Body requestBody: ChangePasswordRequestBody
     ): GenericResponse
 
 }

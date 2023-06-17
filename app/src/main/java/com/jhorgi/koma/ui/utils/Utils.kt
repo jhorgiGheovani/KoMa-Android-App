@@ -1,35 +1,21 @@
 package com.jhorgi.koma.ui.utils
 
 
-import android.app.Application
+
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
-import com.jhorgi.koma.R
 import java.io.*
 import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 
 private const val FILENAME_FORMAT = "dd-MMM-yyyy"
 private const val MAXIMAL_SIZE = 1000000
 
-fun dateConverter(dateData: String): String {
-
-    val inputFormat = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-    val outputFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-    val dateTime = ZonedDateTime.parse(dateData, inputFormat)
-        .withZoneSameInstant(ZoneId.of("Asia/Jakarta"))
-
-    return outputFormat.format(dateTime)
-}
 
 val timeStamp: String = SimpleDateFormat(
     FILENAME_FORMAT,
@@ -41,17 +27,6 @@ fun createCustomTempFile(context: Context): File {
     return File.createTempFile(timeStamp, ".jpg", storageDir)
 }
 
-fun createFile(application: Application): File {
-    val mediaDir = application.externalMediaDirs.firstOrNull()?.let {
-        File(it, application.resources.getString(R.string.app_name)).apply { mkdirs() }
-    }
-
-    val outputDirectory = if (
-        mediaDir != null && mediaDir.exists()
-    ) mediaDir else application.filesDir
-
-    return File(outputDirectory, "$timeStamp.jpg")
-}
 fun uriToFile(selectedImg: Uri, context: Context): File {
     val contentResolver: ContentResolver = context.contentResolver
     val myFile = createCustomTempFile(context)
@@ -82,16 +57,5 @@ fun reduceFileImage(file: File): File {
     return file
 }
 
-fun rotateFile(file: File, isBackCamera: Boolean = false) {
-    val matrix = Matrix()
-    val bitmap = BitmapFactory.decodeFile(file.path)
-    val rotation = if (isBackCamera) 90f else -90f
-    matrix.postRotate(rotation)
-    if (!isBackCamera) {
-        matrix.postScale(-1f, 1f, bitmap.width / 2f, bitmap.height / 2f)
-    }
-    val result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-    result.compress(Bitmap.CompressFormat.JPEG, 100, FileOutputStream(file))
-}
 
 

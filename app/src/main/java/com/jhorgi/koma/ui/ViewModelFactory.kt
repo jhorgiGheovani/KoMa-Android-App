@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.jhorgi.koma.data.MainRepository
 import com.jhorgi.koma.ui.screen.bookmark.BookmarkViewModel
+import com.jhorgi.koma.ui.screen.change_pass.ChangePassViewModel
 import com.jhorgi.koma.ui.screen.detail.DetailViewModel
+import com.jhorgi.koma.ui.screen.edit_profile.EditProfileViewModel
 import com.jhorgi.koma.ui.screen.forgotpass.EmailForgotPasswordViewModel
 import com.jhorgi.koma.ui.screen.home.HomeViewModel
 import com.jhorgi.koma.ui.screen.inputotp.InputOtpViewModel
@@ -40,6 +42,10 @@ class ViewModelFactory(private val repository: MainRepository): ViewModelProvide
             return ResetPasswordViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
             return ProfileViewModel(repository) as T
+        }else if (modelClass.isAssignableFrom(EditProfileViewModel::class.java)) {
+            return EditProfileViewModel(repository) as T
+        }else if (modelClass.isAssignableFrom(ChangePassViewModel::class.java)) {
+            return ChangePassViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

@@ -30,7 +30,9 @@ import com.jhorgi.koma.data.remote.response.login.LoginResponse
 import com.jhorgi.koma.di.Injection
 import com.jhorgi.koma.ui.ViewModelFactory
 import com.jhorgi.koma.ui.common.UiState
+import com.jhorgi.koma.ui.components.LottieLoadingAuthItem
 import com.jhorgi.koma.ui.components.TextFieldLabel
+import com.jhorgi.koma.ui.theme.Typography
 
 @Composable
 fun LoginScreen(
@@ -61,7 +63,10 @@ fun LoginScreen(
                 text = "Don't have any account?",
                 textAlign = TextAlign.Center,
                 color = Color.Black,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                style = MaterialTheme.typography.body2.copy(
+                    fontWeight = FontWeight.Normal
+                )
             )
             Text(
                 text = "Register",
@@ -72,6 +77,9 @@ fun LoginScreen(
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.primary_color),
                 fontSize = 14.sp,
+                style = MaterialTheme.typography.body2.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
 
@@ -107,17 +115,29 @@ private fun inputLoginField(
         }
     }
 
-    Column {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
 
         //Email Input
-        TextFieldLabel(text = "Email")
+        TextFieldLabel(
+            text = "Email",
+        )
         TextField(
             value = email,
             onValueChange = { newText ->
                 email = newText
             },
+            textStyle = Typography.body1.copy(
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Normal
+
+            ) ,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            placeholder = { Text(text = "Enter Email") },
+            placeholder = { Text(
+                text = "Enter Email",
+                style = MaterialTheme.typography.caption
+            ) },
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.atsign),
@@ -154,8 +174,15 @@ private fun inputLoginField(
             onValueChange = { newText ->
                 passwordInput = newText
             },
+            textStyle = Typography.body1.copy(
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Normal
+
+            ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            placeholder = { Text(text = "Enter Password") },
+            placeholder = { Text(
+                text = "Enter Password",
+                style = MaterialTheme.typography.caption) },
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.lock),
@@ -188,12 +215,12 @@ private fun inputLoginField(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, Color.LightGray, RoundedCornerShape(7.dp)),
+                .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp)),
         )
 
         if (isPasswordValid) {
             Text(
-                text = "Password should contain minimum 6 character",
+                text = "Password should contain minimum 8 character",
                 color = MaterialTheme.colors.error,
                 style = MaterialTheme.typography.caption.copy(
                     fontWeight = FontWeight.Normal
@@ -212,6 +239,9 @@ private fun inputLoginField(
             textAlign = TextAlign.Start,
             color = Color.Black,
             fontSize = 14.sp,
+            style = MaterialTheme.typography.body2.copy(
+                fontWeight = FontWeight.Normal
+            )
         )
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -222,7 +252,7 @@ private fun inputLoginField(
             onClick = {
                 isEmailValid = !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
-                isPasswordValid = passwordInput.length <= 6
+                isPasswordValid = passwordInput.length < 8
 
                 if (!isEmailValid && !isPasswordValid) {
                     isButtonClicked = true
@@ -232,33 +262,40 @@ private fun inputLoginField(
             content = {
                 Text(
                     text = "Login",
-                    style = MaterialTheme.typography.h6.copy(
+                    style = MaterialTheme.typography.body1.copy(
                         fontWeight = FontWeight.Bold
                     ),
                     color = Color.White
                 )
             },
-            shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(5.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.primary_color)),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            enabled = isValueEmpty(email, passwordInput)
         )
-
-
     }
-
-
     if (isButtonClicked) {
         when (login) {
             is UiState.Loading -> {
-                Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+                Column (
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Box(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(80.dp)
+                            .padding(15.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LottieLoadingAuthItem(modifier = Modifier)
+                    }
+                }
             }
             is UiState.Success -> {
                 val response = (login as UiState.Success<LoginResponse>).data
                 viewModel.setToken(response.accessToken, context)
-                Toast.makeText(context, "Sukses", Toast.LENGTH_SHORT).show()
                 Log.d("NavigateToHome", "NavigateToHome")
                 navigateToHome()
                 isButtonClicked=false
@@ -273,16 +310,7 @@ private fun inputLoginField(
             viewModel.login(email, passwordInput)
         }
     }
-
-
 }
 
 
-fun isValueEmpty(email: String, password: String): Boolean {
-    var check = true
 
-    if (email.isEmpty() || password.isEmpty()) {
-        check = false
-    }
-    return check
-}

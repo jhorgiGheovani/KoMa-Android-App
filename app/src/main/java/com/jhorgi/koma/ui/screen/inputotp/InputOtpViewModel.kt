@@ -19,7 +19,7 @@ class InputOtpViewModel(private val repository: MainRepository) : ViewModel() {
             try {
                 val response = repository.inputOtp(otp)
                 _inputOtpLiveData.value = response
-            }catch (e: Exception){
+            }catch (_: Exception){
 
             }
         }

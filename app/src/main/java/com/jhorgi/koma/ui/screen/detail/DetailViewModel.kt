@@ -6,14 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jhorgi.koma.data.MainRepository
 import com.jhorgi.koma.data.local.BookmarkList
-import com.jhorgi.koma.data.remote.response.PostPhoto
 import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
-import com.jhorgi.koma.model.DataHomeList
 import com.jhorgi.koma.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 
 class DetailViewModel(
     private val repository: MainRepository

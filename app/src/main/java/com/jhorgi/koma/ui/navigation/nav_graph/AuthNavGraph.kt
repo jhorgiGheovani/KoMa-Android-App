@@ -1,6 +1,7 @@
 package com.jhorgi.koma.ui.navigation.nav_graph
 
 
+import androidx.activity.compose.BackHandler
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.jhorgi.koma.ui.navigation.AUTH_GRAPH_ROUTE
@@ -46,7 +47,8 @@ fun NavGraphBuilder.authNavGraph(
             InputOtpScreen(
                 navigateToResetPassword = {key->
                     navController.navigate(Screen.ResetPassword.createRoute(key))
-                }
+                },
+                onOtpChanged = {}
             )
         }
 
@@ -64,6 +66,13 @@ fun NavGraphBuilder.authNavGraph(
                         }
                     }
                 )
+            }
+            BackHandler {
+                navController.navigate(Screen.Login.route){
+                    popUpTo(Screen.Login.route){
+                        inclusive=true
+                    }
+                }
             }
 //            ResetPasswordScreen(
 //                navigateToLogin = {

@@ -1,15 +1,21 @@
 package com.jhorgi.koma.ui.screen.home
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.AccountCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -17,28 +23,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.jhorgi.koma.R
 import com.jhorgi.koma.data.remote.response.DataItemRecipeRandom
-import com.jhorgi.koma.data.remote.response.RecipeByIdResponse
-import com.jhorgi.koma.data.remote.response.RecipeByIngredientsResponse
 import com.jhorgi.koma.data.remote.response.RecipeRandomResponse
 import com.jhorgi.koma.di.Injection
-import com.jhorgi.koma.model.DataHomeList
 import com.jhorgi.koma.ui.ViewModelFactory
 import com.jhorgi.koma.ui.common.UiState
 import com.jhorgi.koma.ui.components.LottieEmptyItem
 import com.jhorgi.koma.ui.components.LottieErrorItem
 import com.jhorgi.koma.ui.components.LottieLoadingItem
 import com.jhorgi.koma.ui.components.RecipeMenuItem
-import com.jhorgi.koma.ui.navigation.Screen
-import com.jhorgi.koma.ui.screen.detail.DetailViewModel
 
 @Composable
 fun HomeScreen(
@@ -51,7 +49,6 @@ fun HomeScreen(
     navigateToDetail: (String) -> Unit,
     navigateToProfile: () -> Unit
 ) {
-    val context = LocalContext.current
     val recipe by viewModel.recipeLiveData.observeAsState(initial = UiState.Loading)
     when (recipe) {
         is UiState.Loading -> {
@@ -122,15 +119,12 @@ fun HomeScreen(
     }
 
 }
-
-
 @Composable
 fun HomeContent(
     theData: List<DataItemRecipeRandom>,
     modifier: Modifier = Modifier,
     navigateToDetail: (String) -> Unit,
     navigateToProfile: () -> Unit,
-    navController: NavHostController = rememberNavController(),
 ) {
     LazyColumn(
         contentPadding = PaddingValues(
@@ -144,7 +138,6 @@ fun HomeContent(
         items(
             theData
         ) { data ->
-//            Text(text = data.title.toString())
             RecipeMenuItem(
                 name = data.title.toString(),
                 calories = data.calories.toString(),
@@ -157,12 +150,10 @@ fun HomeContent(
             )
         }
     }
-
 }
 
 @Composable
 fun TopContent(
-    navController: NavHostController = rememberNavController(),
     navigateToProfile: () -> Unit
 ) {
     Column(
@@ -181,11 +172,10 @@ fun TopContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(
-                text = "Hello User",
-                style = MaterialTheme.typography.body1,
-                color = Color.Black
-            )
+            Image(painterResource(id =R.drawable.koma_logo ), null , Modifier.size(50.dp).border(
+                BorderStroke(0.5.dp,Color.LightGray),
+                CircleShape
+            ))
             IconButton(
                 onClick = {
                     navigateToProfile()
@@ -201,9 +191,9 @@ fun TopContent(
 
         }
         Text(
-            text = "What do you want to cook today ?",
+            text = "What do you want to cook today?",
             style = MaterialTheme.typography.h1,
-            color = Color.Black
+            color = Color.DarkGray
         )
 
     }

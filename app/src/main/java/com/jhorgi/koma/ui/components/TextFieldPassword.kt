@@ -24,7 +24,7 @@ fun TextFieldPassword(textInput: String, onTextChanged: (String) -> Unit, placeh
         onValueChange = onTextChanged,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         placeholder = {
-            Text(text = placeholder, style = MaterialTheme.typography.body1) },
+            Text(text = placeholder, style = MaterialTheme.typography.caption) },
         leadingIcon = {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.lock),

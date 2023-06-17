@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -16,7 +17,8 @@ fun TextFieldLabel(text: String) {
         style = MaterialTheme.typography.body2.copy(
             fontWeight = FontWeight.Normal
         ),
-        color = Color.Gray,
-        modifier = Modifier.padding(bottom = 4.dp)
+        color = Color.Black,
+        modifier = Modifier.padding(bottom = 4.dp),
+        textAlign = TextAlign.Start
     )
 }

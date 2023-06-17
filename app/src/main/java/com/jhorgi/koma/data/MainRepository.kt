@@ -14,8 +14,6 @@ import com.jhorgi.koma.data.remote.response.otp.InputOtpRequestBody
 import com.jhorgi.koma.data.remote.response.otp.InputOtpRespose
 import com.jhorgi.koma.data.remote.response.register.RegisterRequestBody
 import com.jhorgi.koma.data.remote.retrofit.ApiService
-import com.jhorgi.koma.model.DataHomeList
-import com.jhorgi.koma.model.DummyDataHome
 import com.jhorgi.koma.ui.common.UiState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -27,23 +25,8 @@ class MainRepository(
     private val apiService: ApiService,
     private val apiServicePredict: ApiService,
 ) {
-    private val listDataHome = mutableListOf<DataHomeList>()
+
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
-
-
-    init {
-        if (listDataHome.isEmpty()) {
-            DummyDataHome.dummydata.forEach {
-                listDataHome.add(DataHomeList(it, 0))
-            }
-        }
-    }
-
-    fun getAllItem(): Flow<List<DataHomeList>> {
-        return flowOf(listDataHome)
-    }
-
-    //===========================================================================
     suspend fun postPhoto(photo: MultipartBody.Part): UiState<PostPhoto> {
         return try {
             val response = apiServicePredict.postPhoto(photo)
@@ -54,11 +37,6 @@ class MainRepository(
     }
 
 
-//suspend fun postPhoto(photo : MultipartBody.Part) : PostPhoto {
-//    return apiServicePredict.postPhoto(photo)
-//}
-
-    //===========================================================================
     suspend fun getRecipeById(id: Int): UiState<RecipeByIdResponse> {
         return try {
             val response = apiService.getRecipeById(id)
@@ -122,8 +100,33 @@ class MainRepository(
 
         return runBlocking { result.await() }
     }
+    suspend fun getUserDetail(token: String): UiState<GetUserDetailResponse>{
+        return try {
+            val response = apiService.getDetailUser(token)
+            UiState.Success(response)
+        }catch (e: Exception){
+            UiState.Error(e.message.toString())
+        }
 
+    }
+    suspend fun updateProfile(data: UpdateProfileRequestBody, token: String): UiState<GenericResponse>{
+        return try {
+            val response = apiService.updateProfile(token, data)
+            UiState.Success(response)
+        }catch (e: Exception){
+            UiState.Error(e.message.toString())
+        }
 
+    }
+    suspend fun changePassword(data: ChangePasswordRequestBody, token: String): UiState<GenericResponse>{
+        return try {
+            val response = apiService.changePassword(token, data)
+            UiState.Success(response)
+        }catch (e: Exception){
+            UiState.Error(e.message.toString())
+        }
+
+    }
 // Auth Repository
     suspend fun login(email: String, password: String): UiState<LoginResponse>{
         return try {
@@ -134,8 +137,6 @@ class MainRepository(
         }
 
     }
-
-
     suspend fun registrasi(data: RegisterRequestBody): UiState<GenericResponse>{
         return try {
             val response = apiService.registerUser(data)
@@ -145,7 +146,6 @@ class MainRepository(
         }
 
     }
-
     suspend fun emailForgotPassword(email: String): UiState<GenericResponse>{
         return try {
             val response = apiService.emailForgotPassword(ForgotPasswordRequestBody(email))
@@ -155,7 +155,6 @@ class MainRepository(
         }
 
     }
-
     suspend fun inputOtp(otp: String): UiState<InputOtpRespose>{
         return try {
             val response = apiService.inputOtp(InputOtpRequestBody(otp))
@@ -165,7 +164,6 @@ class MainRepository(
         }
 
     }
-
     suspend fun resetPassword(data: ResetPasswordRequestBody): UiState<GenericResponse>{
         return try {
             val response = apiService.resetPassword(data)
@@ -184,7 +182,6 @@ class MainRepository(
         val settingPreference = LocalDataPreference(context)
         return settingPreference.getToken()
     }
-
     companion object {
         @Volatile
         private var instance: MainRepository? = null

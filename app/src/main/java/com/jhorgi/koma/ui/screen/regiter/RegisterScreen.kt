@@ -3,7 +3,6 @@ package com.jhorgi.koma.ui.screen.regiter
 import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.*
-import com.jhorgi.koma.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,12 +25,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.jhorgi.koma.R
 import com.jhorgi.koma.data.remote.response.GenericResponse
 import com.jhorgi.koma.data.remote.response.register.RegisterRequestBody
 import com.jhorgi.koma.di.Injection
 import com.jhorgi.koma.ui.ViewModelFactory
 import com.jhorgi.koma.ui.common.UiState
+import com.jhorgi.koma.ui.components.LottieLoadingAuthItem
 import com.jhorgi.koma.ui.components.TextFieldLabel
+import com.jhorgi.koma.ui.theme.Typography
 
 @Composable
 fun RegisterScreen(
@@ -58,51 +60,18 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .padding(top = 20.dp, bottom = 20.dp)
         )
-
         //Input Field
         InputRegisterField(navigateToLogin)
-//        TextFieldName(textInput = nameInput, onTextChanged = { newName -> nameInput = newName })
-//        Spacer(modifier = Modifier.height(8.dp))
-//        TextFieldEmail(textInput = email, onTextChanged = { newEmail -> email = newEmail })
-//        ErrorMsg(isEmailValid, "Email Not Valid")
-//        Spacer(modifier = Modifier.height(8.dp))
-//        TextFieldPassword(
-//            textInput = passwordInput,
-//            onTextChanged = { newPassword -> passwordInput = newPassword })
-//        Spacer(modifier = Modifier.height(15.dp))
-//        Button(
-//            onClick = {
-//                isNameValid = nameInput.length > 2
-//                isEmailValid = !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-//                isPasswordValid = passwordInput.length <= 6
-//            },
-//            content = {
-//                Text(
-//                    text = "Register",
-//                    style = MaterialTheme.typography.h6.copy(
-//                        fontWeight = FontWeight.Bold
-//                    ),
-//                    color = Color.White
-//                )
-//            },
-//            shape = RoundedCornerShape(10.dp),
-//            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.primary_color)),
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(50.dp),
-//            enabled = isValueEmpty(nameInput, email, passwordInput)
-//        )
-
-
-
-
         Spacer(modifier = Modifier.height(15.dp))
         Row {
             Text(
                 text = "Already have an account?",
                 textAlign = TextAlign.Center,
                 color = Color.Black,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                style = MaterialTheme.typography.body2.copy(
+                    fontWeight = FontWeight.Normal
+                )
             )
             Text(
                 text = "Login",
@@ -112,17 +81,18 @@ fun RegisterScreen(
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.primary_color),
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                style = MaterialTheme.typography.body2.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-
     }
-
 }
 
 
-
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun InputRegisterField(
     navigateToLogin: () -> Unit,
@@ -132,8 +102,6 @@ private fun InputRegisterField(
         )
     ),
 ) {
-
-
     val register by viewModel.registerLiveData.observeAsState(initial = UiState.Loading)
     var isButtonClicked by remember { mutableStateOf(false) }
     var nameInput by rememberSaveable { mutableStateOf("") }
@@ -143,204 +111,311 @@ private fun InputRegisterField(
     var isNameValid by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(false) }
     var isPasswordValid by remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(false) }
+    var genderInput by remember { mutableStateOf("") }
+
 
     val context = LocalContext.current
 
-
-    Column {
-
-        TextFieldLabel("Name")
-        TextField(
-            value = nameInput,
-            onValueChange = { newText ->
-                nameInput = newText
-            },
-            placeholder = { Text(text = "Enter Name") },
-            leadingIcon = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.user),
-                    contentDescription = "name input register input field"
-                )
-            },
-            singleLine = true,
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                disabledIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, Color.LightGray, RoundedCornerShape(7.dp)),
-
-            )
-        if (isNameValid) {
-            Text(
-                text = "Name minimum 2 characters",
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption.copy(
+    Box (
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column {
+            TextFieldLabel("Name")
+            TextField(
+                value = nameInput,
+                onValueChange = { newText ->
+                    nameInput = newText
+                },
+                placeholder = {
+                    Text(
+                        text = "Enter Name",
+                        style = MaterialTheme.typography.caption
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.user),
+                        contentDescription = "name input register input field"
+                    )
+                },
+                textStyle = Typography.body1.copy(
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Normal
-                )
-            )
-        }
-        //Email Input
-        TextFieldLabel(text = "Email")
-        TextField(
-            value = email,
-            onValueChange = { newText ->
-                email = newText
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            placeholder = { Text(text = "Enter Email") },
-            leadingIcon = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.atsign),
-                    contentDescription = "email input register input field"
-                )
-            },
-            singleLine = true,
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                disabledIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, Color.LightGray, RoundedCornerShape(7.dp))
-        )
 
-        if (isEmailValid) {
-            Text(
-                text = "Email Format Not Valid",
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption.copy(
+                ),
+                singleLine = true,
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.White,
+                    disabledIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(7.dp)),
+
+                )
+            if (isNameValid) {
+                Text(
+                    text = "Name minimum 2 characters",
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption.copy(
+                        fontWeight = FontWeight.Normal
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            //Email Input
+            TextFieldLabel(text = "Email")
+            TextField(
+                value = email,
+                onValueChange = { newText ->
+                    email = newText
+                },
+                textStyle = Typography.body1.copy(
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Normal
-                )
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
 
-        //Password Input
-        TextFieldLabel(text = "Password")
-        TextField(
-            value = passwordInput,
-            onValueChange = { newText ->
-                passwordInput = newText
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            placeholder = { Text(text = "Enter Password") },
-            leadingIcon = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.lock),
-                    contentDescription = "password input register input field"
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                placeholder = {
+                    Text(
+                        text = "Enter Email",
+                        style = MaterialTheme.typography.caption
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.atsign),
+                        contentDescription = "email input register input field"
+                    )
+                },
+                singleLine = true,
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.White,
+                    disabledIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(7.dp))
+            )
+
+            if (isEmailValid) {
+                Text(
+                    text = "Email Format Not Valid",
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption.copy(
+                        fontWeight = FontWeight.Normal
+                    )
                 )
-            },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    if (passwordVisible) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_eye_on),
-                            contentDescription = "Hide password"
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            //Password Input
+            TextFieldLabel(text = "Password")
+            TextField(
+                value = passwordInput,
+                onValueChange = { newText ->
+                    passwordInput = newText
+                },
+                textStyle = Typography.body1.copy(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal
+
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                placeholder = {
+                    Text(
+                        text = "Enter Password",
+                        style = MaterialTheme.typography.caption
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.lock),
+                        contentDescription = "password input register input field"
+                    )
+                },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        if (passwordVisible) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_eye_on),
+                                contentDescription = "Hide password"
+                            )
+                        } else {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_eye_off),
+                                contentDescription = "Show password"
+                            )
+                        }
+                    }
+
+                },
+                singleLine = true,
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.White,
+                    disabledIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(7.dp)),
+            )
+
+            if (isPasswordValid) {
+                Text(
+                    text = "Password should contain minimum 8 character",
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption.copy(
+                        fontWeight = FontWeight.Normal
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextFieldLabel(text = "Gender")
+            ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = { isExpanded = it })
+            {
+                TextField(
+                    value = genderInput,
+                    placeholder = {
+                        Text(
+                            text = "Choose Gender",
+                            style = MaterialTheme.typography.caption
                         )
-                    } else {
+                    },
+                    readOnly = true,
+                    textStyle = Typography.body1.copy(
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Normal
+                    ),
+                    onValueChange = {},
+                    trailingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_eye_off),
-                            contentDescription = "Show password"
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_dropdown),
+                            contentDescription = "Dropdown menu"
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_gender),
+                            contentDescription = "Gender Logo"
+                        )
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                        backgroundColor = Color.White,
+                        disabledIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, Color.LightGray, RoundedCornerShape(7.dp)),
+
+                    )
+                ExposedDropdownMenu(
+                    expanded = isExpanded,
+                    onDismissRequest = { isExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        onClick = {
+                            genderInput = "Male"
+                            isExpanded = false
+                        }
+                    ) {
+                        Text(
+                            text = "Male",
+                            style = MaterialTheme.typography.body2.copy(
+                                fontWeight = FontWeight.Normal
+                            )
+                        )
+                    }
+                    DropdownMenuItem(
+                        onClick = {
+                            genderInput = "Female"
+                            isExpanded = false
+                        }
+                    ) {
+                        Text(
+                            text = "Female",
+                            style = MaterialTheme.typography.body2.copy(
+                                fontWeight = FontWeight.Light
+                            )
                         )
                     }
                 }
+            }
+            Spacer(modifier = Modifier.height(35.dp))
+            //Button Login
+            Button(
+                onClick = {
 
-            },
-            singleLine = true,
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                disabledIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, Color.LightGray, RoundedCornerShape(7.dp)),
-        )
+                    isNameValid = nameInput.length < 2
+                    isEmailValid = !Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
-        if (isPasswordValid) {
-            Text(
-                text = "Password should contain minimum 8 character",
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption.copy(
-                    fontWeight = FontWeight.Normal
-                )
+                    isPasswordValid = passwordInput.length < 8
+
+                    if (!isNameValid && !isEmailValid && !isPasswordValid) {
+                        isButtonClicked = true
+                    }
+                },
+                content = {
+                    Text(
+                        text = "Register",
+                        style = MaterialTheme.typography.body1.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = Color.White
+                    )
+                },
+                shape = RoundedCornerShape(5.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.primary_color)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                enabled = isValueEmpty(nameInput, email, passwordInput, genderInput)
             )
         }
-
-        Spacer(modifier = Modifier.height(25.dp))
-
-
-        //Button Login
-        Button(
-            onClick = {
-                isNameValid = nameInput.length<2
-                isEmailValid = !Patterns.EMAIL_ADDRESS.matcher(email).matches()
-
-                isPasswordValid = passwordInput.length < 8
-
-                if(!isNameValid && !isEmailValid && !isPasswordValid){
-                    isButtonClicked = true
+        if (isButtonClicked) {
+            when (register) {
+                is UiState.Loading -> {
+                    Box(
+                        modifier = Modifier.width(80.dp).height(80.dp).padding(15.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LottieLoadingAuthItem(modifier = Modifier)
+                    }
                 }
-            },
-            content = {
-                Text(
-                    text = "Register",
-                    style = MaterialTheme.typography.h6.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = Color.White
-                )
-            },
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.primary_color)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            enabled = isValueEmpty(nameInput,email,passwordInput)
-        )
+                is UiState.Success -> {
+                    val response = (register as UiState.Success<GenericResponse>).data
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    navigateToLogin()
+                    isButtonClicked = false
+                }
 
-
-    }
-
-    if (isButtonClicked) {
-        when (register) {
-            is UiState.Loading -> {
-                Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+                is UiState.Error -> {
+                    isButtonClicked = false
+                    Toast.makeText(LocalContext.current, "Error", Toast.LENGTH_SHORT).show()
+                }
             }
-            is UiState.Success -> {
-                val response = (register as UiState.Success<GenericResponse>).data
-                Toast.makeText(context,response.message, Toast.LENGTH_SHORT).show()
-                navigateToLogin()
-                isButtonClicked=false
-            }
-            is UiState.Error -> {
-                isButtonClicked=false
-                Toast.makeText(LocalContext.current, "Error", Toast.LENGTH_SHORT).show()
+            LaunchedEffect(Unit) {
+                viewModel.register(RegisterRequestBody(email, passwordInput, nameInput, genderInput))
             }
         }
-
-        LaunchedEffect(Unit) {
-//            viewModel.register(nameInput, email, passwordInput)
-
-            viewModel.register(RegisterRequestBody(email, passwordInput,nameInput, "male"))
-        }
     }
-
 
 }
 
-fun isValueEmpty(name:String , email: String, password: String): Boolean {
+fun isValueEmpty(name: String, email: String, password: String, gender:String): Boolean {
     var check = true
 
-    if (email.isEmpty() || password.isEmpty() ||name.isEmpty()) {
+    if (email.isEmpty() || password.isEmpty() || name.isEmpty() || gender.isEmpty()) {
         check = false
     }
     return check
